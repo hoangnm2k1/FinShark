@@ -1,6 +1,8 @@
+import React from "react";
+
 type Props = {
-  config: any;
   data: any;
+  config: any;
 };
 
 const RatioList = ({ config, data }: Props) => {
@@ -30,7 +32,7 @@ const RatioList = ({ config, data }: Props) => {
     );
   });
   return (
-    <div className="bg-white shadow rounded-lg ml-4 mt-4 mb-4 p-4 sm:p-6 w-full">
+    <div className="bg-white shadow rounded-lg ml-4 mt-4 mb-4 p-4 me-4 sm:p-6 w-full">
       <ul className="divide-y divide-gray-200">{renderedCells}</ul>
     </div>
   );

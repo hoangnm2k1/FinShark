@@ -6,15 +6,14 @@ using api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using seeder;
 
 namespace api.Data
 {
     public class ApplicationDBContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDBContext(DbContextOptions dbContextOptions)
-        : base(dbContextOptions)
+        public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
-
         }
 
         public DbSet<Stock> Stocks { get; set; }
@@ -37,9 +36,7 @@ namespace api.Data
                 .WithMany(u => u.Portfolios)
                 .HasForeignKey(p => p.StockId);
 
-
-            List<IdentityRole> roles = new List<IdentityRole>
-            {
+            List<IdentityRole> roles = [
                 new IdentityRole
                 {
                     Name = "Admin",
@@ -50,7 +47,20 @@ namespace api.Data
                     Name = "User",
                     NormalizedName = "USER"
                 },
-            };
+            ];
+
+            var stocks = StockSeeder.GenerateStock(50);
+            builder.Entity<Stock>().HasData(stocks.Select((s, index) => new Stock
+            {
+                Id = index + 1, 
+                Symbol = s.Symbol,
+                CompanyName = s.CompanyName,
+                Purchase = s.Purchase,
+                LastDiv = s.LastDiv,
+                Industry = s.Industry,
+                MarketCap = s.MarketCap
+            }).ToArray());
+
             builder.Entity<IdentityRole>().HasData(roles);
         }
     }

@@ -6,7 +6,7 @@ using api.Models;
 
 namespace api.Interfaces
 {
-    public interface IPortfolioRepository
+    public interface IPortFolioRepository
     {
         Task<List<Stock>> GetUserPortfolio(AppUser user);
         Task<Portfolio> CreateAsync(Portfolio portfolio);

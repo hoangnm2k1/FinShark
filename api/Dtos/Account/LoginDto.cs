@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace api.Dtos.Account
 {
     public class LoginDto
     {
         [Required]
-        public string Username { get; set; }
+        public string UserName { get; set; }
+        
         [Required]
         public string Password { get; set; }
     }

@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { getHistoricalDividend } from "../../api";
-import Spinner from "../Spinners/Spinner";
 import SimpleLineChart from "../SimpleLineChart/SimpleLineChart";
 import { Dividend } from "../../company";
-
 type Props = {};
-
 const HistoricalDividend = (props: Props) => {
   const ticker = useOutletContext<string>();
   const [dividend, setDividend] = useState<Dividend[]>();
@@ -34,5 +31,4 @@ const HistoricalDividend = (props: Props) => {
     </>
   );
 };
-
 export default HistoricalDividend;

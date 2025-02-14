@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
 import { CompanyKeyMetrics } from "../../company";
+import { useOutletContext } from "react-router-dom";
 import { getKeyMetrics } from "../../api";
 import RatioList from "../RatioList/RatioList";
-import Spinner from "../Spinners/Spinner";
-import {
-  formatLargeNonMonetaryNumber,
-  formatRatio,
-} from "../../Helpers/NumberFormatting";
-import StockComment from "../StockComment/StockComment";
+import Spinner from "../Spinner/Spinner";
+import { formatLargeNonMonetaryNumber, formatRatio } from "../../Helpers/NumberFormating";
 
 type Props = {};
 
@@ -80,23 +76,22 @@ const tableConfig = [
       "This is the upperbouind of the price range that a defensive investor should pay for a stock",
   },
 ];
-
 const CompanyProfile = (props: Props) => {
   const ticker = useOutletContext<string>();
   const [companyData, setCompanyData] = useState<CompanyKeyMetrics>();
   useEffect(() => {
-    const getCompanyKeyRatios = async () => {
+    const getCompanyKeyMetrics = async () => {
       const value = await getKeyMetrics(ticker);
       setCompanyData(value?.data[0]);
     };
-    getCompanyKeyRatios();
+    getCompanyKeyMetrics();
   }, []);
   return (
     <>
+      {" "}
       {companyData ? (
         <>
-          <RatioList config={tableConfig} data={companyData} />
-          <StockComment stockSymbol={ticker} />
+          <RatioList data={companyData} config={tableConfig} />
         </>
       ) : (
         <Spinner />

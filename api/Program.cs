@@ -61,7 +61,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 12;
+    options.Password.RequiredLength = 10;
 })
 .AddEntityFrameworkStores<ApplicationDBContext>();
 
@@ -88,14 +88,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
-builder.Services.AddScoped<IFMPService, FMPService>();
-builder.Services.AddHttpClient<IFMPService, FMPService>();
-
+builder.Services.AddScoped<IPortFolioRepository, PortfolioRepository>();
 
 var app = builder.Build();
 
@@ -109,16 +105,18 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(x => x
-     .AllowAnyMethod()
-     .AllowAnyHeader()
-     .AllowCredentials()
-      //.WithOrigins("https://localhost:44351))
-      .SetIsOriginAllowed(origin => true));
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    // .WithOrigins("http://localhost:3000")
+    .SetIsOriginAllowed(origin => true));
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
 app.Run();
 
+// http://localhost:5240/swagger/index.html

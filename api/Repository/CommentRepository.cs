@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Dtos.Comment;
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
@@ -13,6 +14,7 @@ namespace api.Repository
     public class CommentRepository : ICommentRepository
     {
         private readonly ApplicationDBContext _context;
+
         public CommentRepository(ApplicationDBContext context)
         {
             _context = context;
@@ -27,30 +29,32 @@ namespace api.Repository
 
         public async Task<Comment?> DeleteAsync(int id)
         {
-            var commentModel = await _context.Comments.FirstOrDefaultAsync(x => x.Id == id);
+            var deleteComment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
 
-            if (commentModel == null)
+            if (deleteComment == null)
             {
                 return null;
             }
 
-            _context.Comments.Remove(commentModel);
+            _context.Comments.Remove(deleteComment);
             await _context.SaveChangesAsync();
-            return commentModel;
+            return deleteComment;
         }
 
-        public async Task<List<Comment>> GetAllAsync(CommentQueryObject queryObject)
+        public async Task<List<Comment>> GetAllAsync(CommentQueryObject query)
         {
             var comments = _context.Comments.Include(a => a.AppUser).AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(queryObject.Symbol))
+            if (!string.IsNullOrWhiteSpace(query.Symbol))
             {
-                comments = comments.Where(s => s.Stock.Symbol == queryObject.Symbol);
+                comments = comments.Where(s => s.Stock.Symbol.Equals(query.Symbol, StringComparison.CurrentCultureIgnoreCase));
             };
-            if (queryObject.IsDecsending == true)
+
+            if (query.IsDesc == true)
             {
                 comments = comments.OrderByDescending(c => c.CreatedOn);
             }
+
             return await comments.ToListAsync();
         }
 
@@ -59,21 +63,27 @@ namespace api.Repository
             return await _context.Comments.Include(a => a.AppUser).FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<Comment?> GetBySymbolAsync(string symbol)
+        {
+            return await _context.Comments.Include(a => a.AppUser).FirstOrDefaultAsync(c => c.Stock.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase));
+        }
+
         public async Task<Comment?> UpdateAsync(int id, Comment commentModel)
         {
-            var existingComment = await _context.Comments.FindAsync(id);
+            var updateComment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
 
-            if (existingComment == null)
+            if (updateComment == null)
             {
                 return null;
             }
 
-            existingComment.Title = commentModel.Title;
-            existingComment.Content = commentModel.Content;
+            updateComment.Title = commentModel.Title;
+            updateComment.Content = commentModel.Content;
 
             await _context.SaveChangesAsync();
 
-            return existingComment;
+            return updateComment;
         }
+
     }
 }

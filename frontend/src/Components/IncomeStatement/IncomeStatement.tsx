@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
-import Table from "../Table/Table";
+import React, { useEffect, useState } from "react";
 import { CompanyIncomeStatement } from "../../company";
+import { useOutletContext } from "react-router-dom";
 import { getIncomeStatement } from "../../api";
-import Spinner from "../Spinners/Spinner";
-import {
-  formatLargeMonetaryNumber,
-  formatRatio,
-} from "../../Helpers/NumberFormatting";
+import Table from "../Table/Table";
+import Spinner from "../Spinner/Spinner";
+import "./IncomeStatement.css";
+import { formatLargeMonetaryNumber, formatRatio } from "../../Helpers/NumberFormating";
 
 type Props = {};
 
@@ -84,14 +82,16 @@ const IncomeStatement = (props: Props) => {
   useEffect(() => {
     const getRatios = async () => {
       const result = await getIncomeStatement(ticker!);
-      setIncomeStatement(result!.data);
+      setIncomeStatement(result?.data);
     };
     getRatios();
   }, []);
   return (
     <>
       {incomeStatement ? (
-        <Table config={configs} data={incomeStatement} />
+        <div className="mt-4 w-full income">
+          <Table config={configs} data={incomeStatement} />
+        </div>
       ) : (
         <Spinner />
       )}

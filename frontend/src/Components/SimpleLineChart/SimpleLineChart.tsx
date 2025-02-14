@@ -1,14 +1,5 @@
-import React, { useEffect } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import React from "react";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 type Props = {
   data: any;
@@ -17,10 +8,12 @@ type Props = {
 };
 
 const SimpleLineChart = ({ data, xAxis, dataKey }: Props) => {
+  const LineChartAny = LineChart as any;
+
   return (
     <>
       <ResponsiveContainer width={"99%"} height={500}>
-        <LineChart
+        <LineChartAny
           data={data}
           margin={{
             top: 10,
@@ -37,7 +30,7 @@ const SimpleLineChart = ({ data, xAxis, dataKey }: Props) => {
           />
           <XAxis dataKey={xAxis} />
           <YAxis />
-        </LineChart>
+        </LineChartAny>
       </ResponsiveContainer>
     </>
   );
