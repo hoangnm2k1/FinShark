@@ -18,13 +18,15 @@ namespace api.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IStockRepository _stockRepo;
         private readonly IPortFolioRepository _portfolioRepo;
-    
+        private readonly IFMPService _fmpService;
+
         public PortfolioController(UserManager<AppUser> userManager,
-        IStockRepository stockRepo, IPortFolioRepository portfolioRepo)
+        IStockRepository stockRepo, IPortFolioRepository portfolioRepo, IFMPService fmpService)
         {
             _userManager = userManager;
             _stockRepo = stockRepo;
             _portfolioRepo = portfolioRepo;
+            _fmpService = fmpService;
         }
 
         [HttpGet]
@@ -45,11 +47,25 @@ namespace api.Controllers
             var appUser = await _userManager.FindByNameAsync(username);
             var stock = await _stockRepo.GetBySymbolAsync(symbol);
 
+            if (stock == null)
+            {
+                stock = await _fmpService.FindStockBySymbolAsync(symbol);
+
+                if (stock == null)
+                {
+                    return BadRequest("Stock does not exists");
+                }
+                else
+                {
+                    await _stockRepo.CreateAsync(stock);
+                }
+            }
+
             if (stock == null) return BadRequest("Stock not found");
 
             var userPortfolio = await _portfolioRepo.GetUserPortfolio(appUser);
 
-            if (userPortfolio.Any(e => e.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase)))
+            if (userPortfolio.Any(e => e.Symbol.ToLower() == symbol.ToLower()))
             {
                 return BadRequest("Cannot add same stock to portfolio");
             }

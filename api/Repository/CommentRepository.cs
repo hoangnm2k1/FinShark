@@ -47,7 +47,7 @@ namespace api.Repository
 
             if (!string.IsNullOrWhiteSpace(query.Symbol))
             {
-                comments = comments.Where(s => s.Stock.Symbol.Equals(query.Symbol, StringComparison.CurrentCultureIgnoreCase));
+                comments = comments.Where(s => s.Stock.Symbol.ToLower() == query.Symbol.ToLower());
             };
 
             if (query.IsDesc == true)
@@ -65,7 +65,7 @@ namespace api.Repository
 
         public async Task<Comment?> GetBySymbolAsync(string symbol)
         {
-            return await _context.Comments.Include(a => a.AppUser).FirstOrDefaultAsync(c => c.Stock.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase));
+            return await _context.Comments.Include(a => a.AppUser).FirstOrDefaultAsync(c => c.Stock.Symbol.ToLower() == symbol.ToLower());
         }
 
         public async Task<Comment?> UpdateAsync(int id, Comment commentModel)
